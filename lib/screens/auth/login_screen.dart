@@ -1,190 +1,113 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:food_delivery_app/widgets/app_button.dart';
-import 'package:food_delivery_app/widgets/custom_textfield.dart';
-import 'package:food_delivery_app/utils/helpers.dart';
-import 'package:food_delivery_app/screens/auth/register_screen.dart';
-import 'package:food_delivery_app/screens/auth/forgot_password_screen.dart';
-import 'package:food_delivery_app/providers/auth_provider.dart';
+// import 'package:flutter/material.dart';
+// import 'package:food_delivery_app/services/api_services.dart';
+// import 'package:food_delivery_app/services/auth_services.dart';
+// import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+// class LoginScreen extends StatefulWidget {
+//   @override
+//   _LoginScreenState createState() => _LoginScreenState();
+// }
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
+// class _LoginScreenState extends State<LoginScreen> {
+//   final _formKey = GlobalKey<FormState>();
+//   final _emailController = TextEditingController();
+//   final _passwordController = TextEditingController();
+//   bool _isLoading = false;
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+//   Future<void> _submit() async {
+//     if (!_formKey.currentState!.validate()) {
+//       return;
+//     }
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+//     setState(() {
+//       _isLoading = true;
+//     });
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
-    
-    try {
-      await Provider.of<AuthProvider>(context, listen: false).signInWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-    } catch (e) {
-      showErrorMessage(context, e.toString());
-    }
-  }
+//     try {
+//       final auth = Provider.of<AuthService>(context, listen: false);
+//       final token = await ApiService(null).login(
+//         _emailController.text.trim(),
+//         _passwordController.text.trim(),
+//       );
+//       await auth.login(token);
+//     } catch (error) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Login failed: $error')),
+//       );
+//     } finally {
+//       setState(() {
+//         _isLoading = false;
+//       });
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Login')),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Form(
+//           key: _formKey,
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               TextFormField(
+//                 controller: _emailController,
+//                 decoration: InputDecoration(labelText: 'Email'),
+//                 keyboardType: TextInputType.emailAddress,
+//                 validator: (value) {
+//                   if (value == null || value.isEmpty) {
+//                     return 'Please enter your email';
+//                   }
+//                   if (!value.contains('@')) {
+//                     return 'Please enter a valid email';
+//                   }
+//                   return null;
+//                 },
+//               ),
+//               SizedBox(height: 16),
+//               TextFormField(
+//                 controller: _passwordController,
+//                 decoration: InputDecoration(labelText: 'Password'),
+//                 obscureText: true,
+//                 validator: (value) {
+//                   if (value == null || value.isEmpty) {
+//                     return 'Please enter your password';
+//                   }
+//                   if (value.length < 6) {
+//                     return 'Password must be at least 6 characters';
+//                   }
+//                   return null;
+//                 },
+//               ),
+//               SizedBox(height: 32),
+//               _isLoading
+//                   ? CircularProgressIndicator()
+//                   : ElevatedButton(
+//                       onPressed: _submit,
+//                       child: Text('Login'),
+//                       style: ElevatedButton.styleFrom(
+//                         minimumSize: Size(double.infinity, 50),
+//                       ),
+//                     ),
+//               TextButton(
+//                 onPressed: () {
+//                   Navigator.pushReplacementNamed(context, '/register');
+//                 },
+//                 child: Text('Don\'t have an account? Register'),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                Text(
-                  'Login',
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Please sign in to continue',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                const SizedBox(height: 40),
-                CustomTextField(
-                  controller: _emailController,
-                  label: 'Email',
-                  hint: 'Enter your email',
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _passwordController,
-                  label: 'Password',
-                  hint: 'Enter your password',
-                  obscureText: _obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text('Forgot Password?'),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                AppButton(
-                  text: 'Login',
-                  onPressed: _login,
-                  loading: authProvider.isLoading,
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: Text(
-                    'OR',
-                    style: Theme.of(context).textTheme.subtitle1?.copyWith(
-                          color: Colors.grey,
-                        ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                AppButton(
-                  text: 'Sign in with Google',
-                  onPressed: () async {
-                    try {
-                      await Provider.of<AuthProvider>(context, listen: false)
-                          .signInWithGoogle();
-                    } catch (e) {
-                      showErrorMessage(context, e.toString());
-                    }
-                  },
-                  loading: authProvider.isLoading,
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
-                  icon: Image.asset(
-                    'assets/images/google.png',
-                    height: 24,
-                    width: 24,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Don\'t have an account?',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text('Register'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   void dispose() {
+//     _emailController.dispose();
+//     _passwordController.dispose();
+//     super.dispose();
+//   }
+// }

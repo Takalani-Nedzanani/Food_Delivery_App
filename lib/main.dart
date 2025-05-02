@@ -1,42 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:food_delivery_app/screens/main_screen.dart';
-import 'package:food_delivery_app/providers/auth_provider.dart';
-import 'package:food_delivery_app/providers/restaurant_provider.dart';
-import 'package:food_delivery_app/providers/cart_provider.dart';
-import 'package:food_delivery_app/providers/order_provider.dart';
-import 'package:food_delivery_app/providers/admin_provider.dart';
-import 'package:food_delivery_app/services/storage_service.dart';
+import 'package:provider/provider.dart';
+import 'app_state.dart';
+import 'screens/home_screen.dart';
+import 'screens/menu_screen.dart';
+import 'screens/order_screen.dart';
+import 'screens/order_status_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(FoodOrderApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class FoodOrderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => RestaurantProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider()),
-        ChangeNotifierProvider(create: (_) => AdminProvider()),
-        Provider(create: (_) => StorageService()),
-      ],
+    return ChangeNotifierProvider(
+      create: (context) => AppState(),
       child: MaterialApp(
-        title: 'Food Delivery App',
-        debugShowCheckedModeBanner: false,
+        title: 'Food Order App',
         theme: ThemeData(
           primarySwatch: Colors.orange,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: const MainScreen(),
+        home: HomeScreen(),
+        routes: {
+          '/menu': (context) => MenuScreen(),
+          '/order': (context) => OrderScreen(),
+          '/status': (context) => OrderStatusScreen(),
+        },
       ),
     );
   }
