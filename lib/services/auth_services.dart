@@ -1,39 +1,53 @@
-import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthService with ChangeNotifier {
-  String? _token;
-  bool _isAuth = false;
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  bool get isAuth => _isAuth;
-  String? get token => _token;
-
-  Future<void> autoLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedToken = prefs.getString('token');
-
-    if (storedToken != null) {
-      _token = storedToken;
-      _isAuth = true;
-      notifyListeners();
+  // Sign in with email and password
+  Future<User?> signInWithEmail(String email, String password) async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
+    } catch (e) {
+      print("Login error: $e");
+      return null;
     }
   }
 
-  Future<void> login(String token) async {
-    _token = token;
-    _isAuth = true;
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+  // Register with email and password
+  Future<User?> registerWithEmail(String email, String password) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
+    } catch (e) {
+      print("Registration error: $e");
+      return null;
+    }
   }
 
-  Future<void> logout() async {
-    _token = null;
-    _isAuth = false;
-    notifyListeners();
+  // Password reset
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print("Password reset error: $e");
+      rethrow;
+    }
+  }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+  // Sign out
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+
+  // Auth state stream
+  Stream<User?> get user {
+    return _auth.authStateChanges();
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/app_state.dart';
+import 'package:food_delivery_app/models/menu_item.dart';
+import 'package:food_delivery_app/models/order.dart';
+import 'package:food_delivery_app/models/order_item.dart';
 import 'package:provider/provider.dart';
-import '../app_state.dart';
 
 class OrderScreen extends StatefulWidget {
   @override
@@ -20,54 +23,103 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final MenuItem item = ModalRoute.of(context)!.settings.arguments as MenuItem;
+    final item = ModalRoute.of(context)!.settings.arguments as MenuItem;
     final appState = Provider.of<AppState>(context);
 
     return Scaffold(
       appBar: AppBar(title: Text('Order ${item.name}')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(item.name, style: Theme.of(context).textTheme.titleLarge),
-              Text(item.description),
-              SizedBox(height: 20),
-              Text('\$${item.price.toStringAsFixed(2)}', 
-                  style: Theme.of(context).textTheme.headlineSmall),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: () {
-                      if (_quantity > 1) {
-                        setState(() => _quantity--);
-                      }
-                    },
+              if (item.imageUrl.isNotEmpty)
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    image: DecorationImage(
+                      image: NetworkImage(item.imageUrl),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  Text('$_quantity', style: TextStyle(fontSize: 20)),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () => setState(() => _quantity++),
-                  ),
-                ],
+                ),
+              SizedBox(height: 16),
+              Text(
+                item.name,
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
+              SizedBox(height: 8),
+              Text(
+                item.description,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              SizedBox(height: 16),
+              Text(
+                '\$${item.price.toStringAsFixed(2)}',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Theme.of(context).primaryColor,
+                    ),
+              ),
+              SizedBox(height: 24),
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Quantity',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            onPressed: () {
+                              if (_quantity > 1) {
+                                setState(() => _quantity--);
+                              }
+                            },
+                          ),
+                          Container(
+                            width: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '$_quantity',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () => setState(() => _quantity++),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
               TextFormField(
                 controller: _notesController,
-                decoration: InputDecoration(labelText: 'Special Instructions'),
+                decoration: InputDecoration(
+                  labelText: 'Special Instructions',
+                  border: OutlineInputBorder(),
+                ),
                 maxLines: 3,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () async {
                   try {
                     final order = Order(
                       id: '',
-                      userId: 'user1', // Replace with actual user ID
-                      userName: 'Current User', // Replace with actual user name
+                      userId: 'current_user_id', // Replace with auth user ID
+                      userName: 'Current User', // Replace with auth user name
                       items: [
                         OrderItem(
                           id: item.id,
@@ -82,17 +134,33 @@ class _OrderScreenState extends State<OrderScreen> {
                     );
 
                     await appState.placeOrder(order);
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Order placed successfully!')),
+                      SnackBar(
+                        content: Text('Order placed successfully!'),
+                        behavior: SnackBarBehavior.floating,
+                      ),
                     );
+
                     Navigator.pop(context);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to place order: $e')),
+                      SnackBar(
+                        content: Text('Failed to place order: $e'),
+                        behavior: SnackBarBehavior.floating,
+                      ),
                     );
                   }
                 },
-                child: Text('Place Order'),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Text('PLACE ORDER'),
+                ),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
               ),
             ],
           ),
