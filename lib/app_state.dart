@@ -33,7 +33,23 @@ class AppState with ChangeNotifier {
   Future<void> placeOrder(Order order) async {
     try {
       DatabaseReference newOrderRef = _database.child('orders').push();
-      await newOrderRef.set(order.toMap());
+      await newOrderRef.set({
+        'userId': order.userId,
+        'userName': order.userName,
+        'total': order.total,
+        'status': order.status,
+        'timestamp': order.timestamp.millisecondsSinceEpoch,
+        'notes': order.notes,
+        'items': {
+          for (var item in order.items)
+            item.id: {
+              'id': item.id,
+              'name': item.name,
+              'quantity': item.quantity,
+            }
+        },
+      });
+      debugPrint("Order placed successfully.");
     } catch (e) {
       debugPrint("Error placing order: $e");
       rethrow;
