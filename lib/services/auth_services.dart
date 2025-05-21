@@ -17,7 +17,7 @@ class AuthService {
     }
   }
 
-  // Register with email and password
+  // Register with email & password
   Future<User?> registerWithEmail(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -25,12 +25,14 @@ class AuthService {
         password: password,
       );
       return result.user;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.code} - ${e.message}');
+      return null;
     } catch (e) {
-      print("Registration error: $e");
+      print('Error during registration: $e');
       return null;
     }
   }
-
   // Password reset
   Future<void> resetPassword(String email) async {
     try {
@@ -51,3 +53,5 @@ class AuthService {
     return _auth.authStateChanges();
   }
 }
+
+

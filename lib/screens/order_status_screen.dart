@@ -4,6 +4,8 @@ import 'package:food_delivery_app/models/order.dart';
 import 'package:provider/provider.dart';
 
 class OrderStatusScreen extends StatefulWidget {
+  const OrderStatusScreen({super.key});
+
   @override
   _OrderStatusScreenState createState() => _OrderStatusScreenState();
 }
@@ -11,15 +13,17 @@ class OrderStatusScreen extends StatefulWidget {
 class _OrderStatusScreenState extends State<OrderStatusScreen> {
   @override
   Widget build(BuildContext context) {
-    final userId = 'current_user_id'; // Replace with auth user ID
+    final userId = 'current_user_id'; // Replace with actual user ID
     final ordersStream = Provider.of<AppState>(context).getUserOrders(userId);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Orders'),
+        backgroundColor: Colors.orange,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('My Orders', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: () {
               Provider.of<AppState>(context, listen: false).loadMenuItems();
             },
@@ -30,7 +34,8 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
         stream: ordersStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.orange));
           }
 
           if (snapshot.hasError) {
@@ -38,24 +43,24 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No orders found'));
+            return const Center(child: Text('No orders found'));
           }
 
           final orders = snapshot.data!;
 
           return ListView.separated(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: orders.length,
-            separatorBuilder: (context, index) => SizedBox(height: 16),
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
             itemBuilder: (context, index) {
               final order = orders[index];
               return Card(
-                elevation: 2,
+                elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -64,19 +69,17 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                         children: [
                           Text(
                             'Order #${order.id.substring(0, 8)}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
                               color: _getStatusColor(order.status)
-                                  .withOpacity(0.2),
+                                  .withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -89,29 +92,29 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(
                         'Placed on ${_formatDate(order.timestamp)}',
-                        style: TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: Colors.grey),
                       ),
-                      SizedBox(height: 12),
-                      Divider(),
+                      const SizedBox(height: 12),
+                      const Divider(),
                       ...order.items.map((item) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 4),
                             child: Text('${item.quantity}x ${item.name}'),
                           )),
                       if (order.notes?.isNotEmpty ?? false) ...[
-                        Divider(),
+                        const Divider(),
                         Text(
                           'Notes: ${order.notes}',
-                          style: TextStyle(fontStyle: FontStyle.italic),
+                          style: const TextStyle(fontStyle: FontStyle.italic),
                         ),
                       ],
-                      Divider(),
+                      const Divider(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'Total',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -119,11 +122,11 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                             ),
                           ),
                           Text(
-                            '\$${order.total.toStringAsFixed(2)}',
-                            style: TextStyle(
+                            'R${order.total.toStringAsFixed(2)}',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: Theme.of(context).primaryColor,
+                              color: Colors.orange,
                             ),
                           ),
                         ],
@@ -140,17 +143,18 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
   }
 
   Color _getStatusColor(String status) {
+    // All statuses use orange tones
     switch (status) {
       case 'pending':
-        return Colors.orange;
+        return Colors.deepOrange;
       case 'preparing':
-        return Colors.blue;
+        return Colors.orange;
       case 'ready':
-        return Colors.green;
+        return Colors.orangeAccent;
       case 'collected':
-        return Colors.grey;
+        return Colors.brown;
       default:
-        return Colors.black;
+        return Colors.grey;
     }
   }
 
@@ -158,3 +162,35 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
     return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
+
+
+
+
+
+//database rules
+
+
+
+// {
+//   "rules": {
+//      ".read": "auth != null",
+//      ".write": "auth != null",
+
+//     "orders": {
+//       "$user_id": {
+//         ".read": "$user_id === auth.uid",
+//         ".write": "$user_id === auth.uid",
+//       "$orderId": {
+//         ".read": "auth != null && data.child('userId').val() === auth.uid",  // Users read only their orders
+//         ".write": "auth != null && (auth.token.admin == true || data.child('userId').val() === auth.uid)",  // Admins or the order's owner can write
+//          "status": {
+//           ".validate": "newData.isString()"
+//         }
+//       }
+//     },
+//     "menu": {
+//       ".read": true
+//     }
+//   }
+// }
+// }

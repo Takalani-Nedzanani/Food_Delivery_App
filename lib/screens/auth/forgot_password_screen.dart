@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'login_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
@@ -27,7 +27,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    
+
     try {
       final auth = Provider.of<AuthService>(context, listen: false);
       await auth.resetPassword(_emailController.text.trim());
@@ -47,7 +47,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forgot Password'),
+        backgroundColor: Colors.orange,
+        title: const Text(
+          'Forgot Password',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -70,7 +75,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
+                    prefixIcon: Icon(Icons.email, color: Colors.orange),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange),
+                    ),
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -89,13 +97,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _resetPassword,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                     child: _isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('SEND RESET LINK'),
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'SEND RESET LINK',
+                            style: TextStyle(color: Colors.white),
+                          ),
                   ),
                 ),
               ] else ...[
-                const Icon(Icons.check_circle, color: Colors.green, size: 60),
+                const Icon(Icons.check_circle, color: Colors.orange, size: 60),
                 const SizedBox(height: 20),
                 const Text(
                   'Password reset email sent!',
@@ -118,7 +136,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       );
                     },
-                    child: const Text('BACK TO LOGIN'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'BACK TO LOGIN',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
