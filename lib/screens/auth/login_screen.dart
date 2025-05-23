@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     const Text(
-                      'Food Delivery App',
+                      'James’ Foodbar',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -196,5 +196,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-

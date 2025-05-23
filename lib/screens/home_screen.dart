@@ -54,6 +54,18 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.receipt_long),
             label: 'My Orders',
           ),
+          // BottomNavigationBarItem(
+          //   icon: GestureDetector(
+          //     onTap: () async {
+          //       Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => const CartScreen()),
+          //       );
+          //     },
+          //     child: const Icon(Icons.shopping_cart),
+          //   ),
+          //   label: 'Cart',
+          // ),
           BottomNavigationBarItem(
             icon: GestureDetector(
               onTap: () async {
@@ -83,7 +95,7 @@ class HomeContent extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text(
-          'Food Delivery App',
+          'James’ Foodbar',
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -98,7 +110,7 @@ class HomeContent extends StatelessWidget {
               const Icon(Icons.fastfood, size: 80, color: Colors.orange),
               const SizedBox(height: 20),
               const Text(
-                'Welcome to the Food Delivery App!',
+                'Welcome to James’ Foodbar!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,

@@ -134,12 +134,13 @@ class _OrderScreenState extends State<OrderScreen> {
                     final order = Order(
                       id: '',
                       userId: user.uid,
-                      userName: user.email ?? 'Unknown',
+                      userName: user.email ?? '',
                       items: [
                         OrderItem(
                           id: item.id,
                           name: item.name,
                           quantity: _quantity,
+                          imageUrl: item.imageUrl,
                         ),
                       ],
                       total: item.price * _quantity,
@@ -173,6 +174,26 @@ class _OrderScreenState extends State<OrderScreen> {
                   child: Text('PLACE ORDER'),
                 ),
               ),
+              // const SizedBox(height: 16),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     appState.addToCart(item, _quantity);
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       const SnackBar(content: Text('Added to cart')),
+              //     );
+              //     Navigator.pop(context);
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.green,
+              //     foregroundColor: Colors.white,
+              //     shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(8)),
+              //   ),
+              //   child: const Padding(
+              //     padding: EdgeInsets.symmetric(vertical: 16),
+              //     child: Text('ADD TO CART'),
+              //   ),
+              // ),
             ],
           ),
         ),

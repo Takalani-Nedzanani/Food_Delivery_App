@@ -42,6 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final user = await auth.registerWithEmail(
       _emailController.text.trim(),
       _passwordController.text.trim(),
+      '', // Provide the required third argument (e.g., username or name)
     );
 
     setState(() => _isLoading = false);
