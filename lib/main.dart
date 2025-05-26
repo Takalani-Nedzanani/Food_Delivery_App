@@ -52,11 +52,11 @@ class FoodOrderApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
           '/forgot-password': (context) => const ForgotPasswordScreen(),
-          '/home': (context) => const MainScreen(),
+          '/home': (context) => const MainScreen(),       
           '/menu': (context) => MenuScreen(),
           '/order': (context) => OrderScreen(),
           '/status': (context) => OrderStatusScreen(),
-          '/cart': (context) => const CartScreen(),
+          // '/cart': (context) => const CartScreen(),
         },
       ),
     );

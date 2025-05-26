@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/app_state.dart';
 import 'package:food_delivery_app/models/order.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 class OrderStatusScreen extends StatefulWidget {
@@ -11,9 +12,27 @@ class OrderStatusScreen extends StatefulWidget {
 }
 
 class _OrderStatusScreenState extends State<OrderStatusScreen> {
+  late String userId;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userId = user.uid;
+    } else {
+      userId = ''; // fallback
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userId = 'current_user_id'; // Replace with actual user ID
+    if (userId.isEmpty) {
+      return const Scaffold(
+        body: Center(child: Text("User not logged in")),
+      );
+    }
+
     final ordersStream = Provider.of<AppState>(context).getUserOrders(userId);
 
     return Scaffold(
@@ -70,9 +89,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                           Text(
                             'Order #${order.id.substring(0, 8)}',
                             style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -117,9 +134,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                           const Text(
                             'Total',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
                             'R${order.total.toStringAsFixed(2)}',
@@ -143,7 +158,6 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
   }
 
   Color _getStatusColor(String status) {
-    // All statuses use orange tones
     switch (status) {
       case 'pending':
         return Colors.deepOrange;
@@ -162,6 +176,11 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
     return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
+
+
+
+
+
 
 
 
