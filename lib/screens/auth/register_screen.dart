@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/services/auth_services.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final user = await auth.registerWithEmail(
       _emailController.text.trim(),
       _passwordController.text.trim(),
-      '', // Provide the required third argument (e.g., username or name)
+      '', // You can pass username or name if required
     );
 
     setState(() => _isLoading = false);
@@ -65,21 +67,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: const Text('Register', style: TextStyle(color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Padding(
+      
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              SizedBox(height: 80),
+              SizedBox(
+                height: 200,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/register.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(

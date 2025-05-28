@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:food_delivery_app/screens/cart_page.dart';
 import 'package:food_delivery_app/services/notification_service.dart';
 import 'package:provider/provider.dart';
 

@@ -1,3 +1,6 @@
+
+
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/services/auth_services.dart';
 import 'package:provider/provider.dart';
@@ -66,11 +69,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (!_emailSent) ...[
-                const Text(
-                  'Enter your email address to receive a password reset link',
-                  style: TextStyle(fontSize: 16),
+                Column(
+                  children: const [
+                    SizedBox(height: 50),
+                    Icon(Icons.lock_reset, size: 150, color: Colors.orange),
+                    SizedBox(height: 16),
+                    Text(
+                      'Enter your email address to receive a password reset link',
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30),
+                  ],
                 ),
-                const SizedBox(height: 30),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(

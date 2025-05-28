@@ -96,6 +96,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                 horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
                               color: _getStatusColor(order.status)
+                                  // ignore: deprecated_member_use
                                   .withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -160,13 +161,13 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'pending':
-        return Colors.deepOrange;
+        return const Color.fromARGB(255, 234, 31, 0);
       case 'preparing':
-        return Colors.orange;
+        return const Color.fromARGB(255, 221, 134, 2);
       case 'ready':
-        return Colors.orangeAccent;
+        return const Color.fromARGB(255, 245, 221, 1);
       case 'collected':
-        return Colors.brown;
+        return const Color.fromARGB(255, 77, 250, 3);
       default:
         return Colors.grey;
     }
